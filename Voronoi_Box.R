@@ -128,12 +128,19 @@ run_coordinates <- matched_run %>%
   filter(tackleFrame >= frameId) %>%
   mutate(netX = X_std.y - X_std.x,
          netY = Y_std.y - Y_std.x) %>%
-  select(netX, netY)
+  select(netX, netY, week)
+
+
+run_coordinates_train <- run_coordinates %>%
+  filter(week == 1 | week == 2)
+  
+run_coordinates_test <- run_coordinates %>%
+  filter(week != 1 & week != 2)
 
 column_name <- "netX"
 
 #REPEAT FOR X, Y, IN BOTH NEGATIVE AND POSITIVE DIRECTIONS, AND FOR RUN AND PASS
-percentile_90 <- quantile(run_coordinates[[column_name]], 0.9)
+percentile_90 <- quantile(run_coordinates_train[[column_name]], 0.9)
 
 print(percentile_90)
 
@@ -142,3 +149,9 @@ print(percentile_90)
 
 #(-3 to 9 in X, -5 to 5 in Y) for run
 #(-4 to 9 in X, -6 to 6 in Y) for run
+
+
+
+#ENSURE THIS WORKS ON REST OF DATA
+percentile_value <- quantile(run_coordinates_test$netX, probs = c(-5), na.rm = TRUE)
+print(percentile_value)
